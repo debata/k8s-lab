@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: cmk
+  name: cmk
+  namespace: cmk
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cmk
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: cmk
+    spec:
+      containers:
+      - image: checkmk/check-mk-raw:2.0.0b1
+        name: check-mk-raw
+        resources: {}
+        ports:
+          - containerPort: 5000
+        volumeMounts:
+          - mountPath: /omd/sites
+            name: site-volume
+          - mountPath: /opt/omd/sites/cmk/tmp
+            name: tmp-volume
+      volumes:
+      - name: site-volume
+        persistentVolumeClaim:
+          claimName: site-pvc
+      - name: tmp-volume
+        emptyDir:
+          medium: "Memory"
+      securityContext:
+        fsGroup: 0
+        runAsUser: 0
+        runAsGroup: 0
+status: {}

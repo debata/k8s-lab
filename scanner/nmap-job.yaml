@@ -1,0 +1,14 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: nmap-scanner-job
+spec:
+  template:
+    spec:
+      containers:
+      - name: nmap
+        image: networkstatic/nmap
+        args:
+          - -sT
+          - 192.168.1.1-200
+      restartPolicy: Never  

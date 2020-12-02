@@ -1,0 +1,102 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: pihole
+  name: pihole
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pihole
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: pihole
+    spec:
+      containers:
+      - image: pihole/pihole:v5.1.2
+        name: pihole 
+        resources: {}
+        ports:
+          - name: dns-tcp
+            containerPort: 53
+            protocol: TCP
+          - name: dns-udp
+            containerPort: 53
+            protocol: UDP
+          - name: http
+            containerPort: 80
+          - name: https
+            containerPort: 443
+        volumeMounts:
+          - mountPath: /etc/pihole/
+            name: pihole-volume
+          - mountPath: /etc/dnsmasq.d/
+            name: dnsmasq-volume
+        livenessProbe:
+          exec:
+            command:
+            - dig
+            - tsn.ca
+            - \@localhost
+          initialDelaySeconds: 600
+          periodSeconds: 600
+      volumes:
+      - name: pihole-volume
+        persistentVolumeClaim:
+          claimName: pvc-pihole-config
+      - name: dnsmasq-volume
+        persistentVolumeClaim:
+          claimName: pvc-pihole-dnsmasq
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    metallb.universe.tf/allow-shared-ip: pihole
+  labels:
+    app: pihole
+  name: pihole-tcp
+spec:
+  loadBalancerIP: 192.168.2.242
+  externalTrafficPolicy: Local
+  ports:
+  - name: dns-tcp-svc
+    port: 53
+    protocol: TCP
+    targetPort: dns-tcp
+  - name: http-svc
+    port: 80
+    protocol: TCP
+    targetPort: http
+  - name: https-svc
+    port: 443
+    protocol: TCP
+    targetPort: https
+  selector:
+    app: pihole
+  type: LoadBalancer
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    metallb.universe.tf/allow-shared-ip: pihole
+  labels:
+    app: pihole
+  name: pihole-udp
+spec:
+  loadBalancerIP: 192.168.2.242
+  externalTrafficPolicy: Local
+  ports:
+  - name: dns-udp-svc
+    port: 53
+    protocol: UDP
+    targetPort: dns-udp
+  selector:
+    app: pihole
+  type: LoadBalancer

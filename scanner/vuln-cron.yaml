@@ -1,0 +1,17 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: vuln-scanner
+spec:
+  schedule: "45 11 * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: vuln-scanner
+            image: debat059/vuln-scanner:v0.1
+            args:
+            - --script=nmap-vulners
+            - 192.168.1.1-200
+          restartPolicy: Never
