@@ -1,0 +1,54 @@
+global:
+  logLevel: debug
+  splunk:
+    hec:
+      protocol: https
+      insecureSSL: true
+      host: $CI_SPLUNK_HEC_HOST
+      token: $CI_SPLUNK_HEC_TOKEN
+
+splunk-kubernetes-logging:
+  kubernetes:
+    insecureSSL: true
+    clusterName: "circleci-k8s-cluster"
+  splunk:
+    hec:
+      indexName: circleci_events
+  image:
+    name:
+    pullPolicy: Always
+  k8sMetadata:
+    podLabels:
+      - app
+  customMetadata:
+    - name: customfield1
+      value: customvalue1
+    - name: customfield2
+      value: customvalue2
+  customMetadataAnnotations:
+    - name: custom_field
+      annotation: splunk.com/custom-field
+
+splunk-kubernetes-metrics:
+  kubernetes:
+    useRestClientSSL: false
+    insecureSSL: true
+    kubeletPort: 10255
+    clusterName: "circleci-k8s-cluster-metrics"
+  splunk:
+    hec:
+      indexName: circleci_metrics
+  image:
+    name:
+    pullPolicy: Always
+
+splunk-kubernetes-objects:
+  splunk:
+    hec:
+      indexName: circleci_objects
+  kubernetes:
+    insecureSSL: true
+    clusterName: "circleci-k8s-cluster-objects"
+  image:
+    name:
+    pullPolicy: Always
