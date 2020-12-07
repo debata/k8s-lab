@@ -322,6 +322,13 @@ splunk-kubernetes-logging:
       timestampExtraction:
         format: "%Y-%m-%dT%H:%M:%SZ"
       sourcetype: kube:apiserver-audit
+    pihole:
+      from:
+        file:
+          path: /var/log/pihole.log
+      timestampExtraction:
+        format: "%b %d %T%H:%M:%S"
+      sourcetype: kube:pihole
 
   # Defines which version of image to use, and how it should be pulled.
   image:

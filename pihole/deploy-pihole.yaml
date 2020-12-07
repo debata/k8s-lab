@@ -35,6 +35,8 @@ spec:
             name: pihole-volume
           - mountPath: /etc/dnsmasq.d/
             name: dnsmasq-volume
+          - mountPath: /var/log
+            name: log-vol
         livenessProbe:
           exec:
             command:
@@ -43,6 +45,15 @@ spec:
             - \@localhost
           initialDelaySeconds: 600
           periodSeconds: 600
+      - image: busybox
+        name: log-sidecar
+        args: 
+          - /bin/sh
+          - -c
+          - tail -f /var/log/pihole.log
+        volumeMounts:
+          - mountPath: /var/log
+            name: log-vol
       volumes:
       - name: pihole-volume
         persistentVolumeClaim:
@@ -50,6 +61,8 @@ spec:
       - name: dnsmasq-volume
         persistentVolumeClaim:
           claimName: pvc-pihole-dnsmasq
+      - name: log-vol
+        emptyDir: {}
 
 ---
 apiVersion: v1
