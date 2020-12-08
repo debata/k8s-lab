@@ -54,6 +54,13 @@ spec:
         volumeMounts:
           - mountPath: /var/log
             name: log-vol
+      initContainers:
+        - name: init-myservice
+          image: busybox
+          command: ['sh', '-c', "mkdir /var/log/lighttpd; mkdir /var/log/pihole; chmod 777 /var/log/*"]
+          volumeMounts:
+          - mountPath: /var/log
+            name: log-vol
       volumes:
       - name: pihole-volume
         persistentVolumeClaim:
