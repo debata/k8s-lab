@@ -40,9 +40,9 @@ spec:
         livenessProbe:
           exec:
             command:
-            - dig
-            - tsn.ca
-            - \@localhost
+            - sh
+            - -c 
+            - 'dig tsn.ca @@localhost +tries=1 +time=5'
           initialDelaySeconds: 600
           periodSeconds: 600
       - image: busybox
