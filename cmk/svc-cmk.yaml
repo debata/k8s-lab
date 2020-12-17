@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: null
+  labels:
+    app: cmk
+    app.kubernetes.io/instance: check-mk
+  name: cmk
+  namespace: cmk
+spec:
+  externalIPs:
+  - 192.168.2.240
+  ports:
+  - port: 5000
+    protocol: TCP
+    targetPort: 5000
+  selector:
+    app: cmk
+  type: LoadBalancer
+status:
+  loadBalancer: {}
