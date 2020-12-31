@@ -13,5 +13,5 @@ spec:
             image: networkstatic/nmap
             args:
             - -sT
-            - 192.168.1.1-200
+            - 192.168.1.1-254
           restartPolicy: Never
