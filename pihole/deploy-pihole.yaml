@@ -16,7 +16,7 @@ spec:
         app: pihole
     spec:
       containers:
-      - image: pihole/pihole:v5.2.1
+      - image: pihole/pihole:v5.3.4
         name: pihole 
         resources: {}
         ports:
@@ -42,7 +42,7 @@ spec:
             command:
             - sh
             - -c 
-            - 'dig tsn.ca @@localhost +tries=1 +time=5'
+            - 'dig tsn.ca @localhost +tries=1 +time=5'
           initialDelaySeconds: 600
           periodSeconds: 600
       - image: busybox
