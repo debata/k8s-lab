@@ -16,7 +16,7 @@ spec:
         app: pihole
     spec:
       containers:
-      - image: pihole/pihole:v5.3.4
+      - image: pihole/pihole:v5.4
         name: pihole 
         resources: {}
         ports:
