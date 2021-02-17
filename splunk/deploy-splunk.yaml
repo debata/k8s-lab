@@ -1,0 +1,119 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: splunk
+  name: splunk
+  namespace: splunk
+spec:
+  replicas: 1 
+  selector: 
+    matchLabels:
+      app: splunk
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: splunk
+    spec:
+      containers:
+      - image: splunk/splunk:8.1.1
+        name: splunk 
+        resources: {}
+        ports:
+          - name: web
+            containerPort: 8000
+            protocol: TCP
+        volumeMounts:
+          - mountPath: /opt/splunk/var/
+            name: splunk-volume-var
+          - name: splunk-volume-etc
+            mountPath: /opt/splunk/etc
+          - name: log-volume
+            mountPath: /var/log
+        env:
+          - name: SPLUNK_START_ARGS
+            valueFrom:
+              configMapKeyRef:
+                name: splunk-map
+                key: start_args
+          - name: SPLUNK_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: splunk-pass
+                key: password
+          - name: SPLUNK_HOME
+            value: /opt/splunk
+          - name: DEBUG
+            value: "true"
+      - name: splunk-config-mover
+        image: busybox
+        command: ['sh', '-c', 'sleep 180 && 
+                              mkdir -p /opt/splunk/etc/apps/offline-root/local &&
+                              cp  -Lr /configs/* /opt/splunk/etc/apps/offline-root/local && 
+                              chown -R 41812:41812 /opt/splunk/etc/apps/offline-root/local']
+        volumeMounts:
+        - mountPath: /opt/splunk/etc
+          name: splunk-volume-etc
+        - name: input-volume
+          mountPath: /configs
+      volumes:
+      - name: splunk-volume-var
+        persistentVolumeClaim:
+          claimName: pvc-splunk-var
+      - name: splunk-volume-etc
+        persistentVolumeClaim:
+          claimName: pvc-splunk-etc
+      - name: log-volume
+        persistentVolumeClaim:
+          claimName: pvc-varlog-local
+      - name: input-volume
+        configMap: 
+          name: input-config
+          defaultMode: 0777
+
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: splunk-map
+  namespace: splunk
+data:
+  start_args: "--accept-license"
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: input-config
+  namespace: splunk
+data:
+  inputs.conf: |
+    [monitor:///var/log/*]
+    index=main
+    sourcetype=offlineroot
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    metallb.universe.tf/allow-shared-ip: splunk
+  labels:
+    app: splunk
+  name: splunk-tcp
+  namespace: splunk
+spec:
+  loadBalancerIP: 192.168.2.246
+  externalTrafficPolicy: Local
+  ports:
+  - name: web-svc
+    port: 8000
+    protocol: TCP
+    targetPort: web
+  selector:
+    app: splunk
+  type: LoadBalancer
+

@@ -1,0 +1,39 @@
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pvc-splunk-var
+  namespace: splunk
+spec:
+  storageClassName: "local-storage"
+  accessModes: 
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 15Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pvc-splunk-etc
+  namespace: splunk
+spec:
+  storageClassName: "local-storage"
+  accessModes: 
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 15Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pvc-varlog-local
+  namespace: splunk
+spec:
+  storageClassName: "log-storage"
+  accessModes: 
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 15Gi

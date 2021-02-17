@@ -1,0 +1,19 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    kubernetes.io/ingress.class: haproxy
+  name: example-pihole
+  namespace: pihole
+spec:
+  rules:
+    - host: k8s.home
+      http:
+        paths:
+          - backend:
+              service:
+                name: pihole-tcp
+                port: 
+                  number: 80
+            path: /pihole
+            pathType: Prefix
