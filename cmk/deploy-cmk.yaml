@@ -19,7 +19,7 @@ spec:
         app: cmk
     spec:
       containers:
-      - image: checkmk/check-mk-raw:2.0.0b6
+      - image: checkmk/check-mk-raw:2.0.0
         name: check-mk-raw
         resources: {}
         ports:
