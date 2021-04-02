@@ -30,6 +30,9 @@ spec:
           - name: web
             containerPort: 8000
             protocol: TCP
+          - name: forward
+            containerPort: 9997
+            protocol: TCP
         volumeMounts:
           - mountPath: /opt/splunk/var/
             name: splunk-volume-var
@@ -93,6 +96,10 @@ spec:
     port: 8000
     protocol: TCP
     targetPort: web
+  - name: web-svc
+    port: 9997
+    protocol: TCP
+    targetPort: forward
   selector:
     app: splunk
   type: LoadBalancer
