@@ -33,6 +33,9 @@ spec:
           - name: forward
             containerPort: 9997
             protocol: TCP
+          - name: hec
+            containerPort: 8088
+            protocol: TCP
         volumeMounts:
           - mountPath: /opt/splunk/var/
             name: splunk-volume-var
@@ -96,10 +99,14 @@ spec:
     port: 8000
     protocol: TCP
     targetPort: web
-  - name: web-svc
+  - name: forward-svc
     port: 9997
     protocol: TCP
     targetPort: forward
+  - name: hec-svc
+    port: 8088
+    protocol: TCP
+    targetPort: hec
   selector:
     app: splunk
   type: LoadBalancer
