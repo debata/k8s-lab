@@ -1,4 +1,9 @@
 ---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: splunk
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -47,17 +52,9 @@ spec:
             value: /opt/splunk
           - name: DEBUG
             value: "true"
-      - name: splunk-config-mover
-        image: busybox
-        command: ['sh', '-c', 'sleep 180 && 
-                              mkdir -p /opt/splunk/etc/apps/offline-root/local &&
-                              cp  -Lr /configs/* /opt/splunk/etc/apps/offline-root/local && 
-                              chown -R 41812:41812 /opt/splunk/etc/apps/offline-root/local']
         volumeMounts:
         - mountPath: /opt/splunk/etc
           name: splunk-volume-etc
-        - name: input-volume
-          mountPath: /configs
       volumes:
       - name: splunk-volume-var
         persistentVolumeClaim:
@@ -68,11 +65,6 @@ spec:
       - name: log-volume
         persistentVolumeClaim:
           claimName: pvc-varlog-local
-      - name: input-volume
-        configMap: 
-          name: input-config
-          defaultMode: 0777
-
 
 ---
 apiVersion: v1
@@ -82,18 +74,6 @@ metadata:
   namespace: splunk
 data:
   start_args: "--accept-license"
-
----
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: input-config
-  namespace: splunk
-data:
-  inputs.conf: |
-    [monitor:///var/log/*]
-    index=main
-    sourcetype=offlineroot
 
 ---
 apiVersion: v1
