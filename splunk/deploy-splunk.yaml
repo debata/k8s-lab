@@ -36,9 +36,12 @@ spec:
           - name: hec
             containerPort: 8088
             protocol: TCP
-          - name: syslog
+          - name: udp-syslog
             containerPort: 9999
             protocol: UDP
+          - name: tcp-syslog
+            containerPort: 9999
+            protocol: TCP
         volumeMounts:
           - mountPath: /opt/splunk/var/
             name: splunk-volume-var
@@ -110,6 +113,10 @@ spec:
     port: 8088
     protocol: TCP
     targetPort: hec
+  - name: tcp-syslog-svc
+    port: 9999
+    protocol: TCP
+    targetPort: tcp-syslog
   selector:
     app: splunk
   type: LoadBalancer
@@ -128,10 +135,10 @@ spec:
   loadBalancerIP: 192.168.2.246
   externalTrafficPolicy: Local
   ports:
-  - name: syslog-svc
+  - name: udp-syslog-svc
     port: 9999
     protocol: UDP
-    targetPort: syslog
+    targetPort: udp-syslog
   selector:
     app: splunk
   type: LoadBalancer
