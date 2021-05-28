@@ -40,7 +40,7 @@ spec:
           medium: "Memory"
       - name: postfix
         hostPath:
-          path: /etc/postfix
+          path: /opt/postfix
       securityContext:
         fsGroup: 0
         runAsUser: 0
