@@ -29,6 +29,8 @@ spec:
             name: site-volume
           - mountPath: /opt/omd/sites/cmk/tmp
             name: tmp-volume
+          - mountPath: /etc/postfix
+            name: postfix
       volumes:
       - name: site-volume
         persistentVolumeClaim:
@@ -36,6 +38,9 @@ spec:
       - name: tmp-volume
         emptyDir:
           medium: "Memory"
+      - name: postfix
+        hostPath:
+          path: /etc/postfix
       securityContext:
         fsGroup: 0
         runAsUser: 0
