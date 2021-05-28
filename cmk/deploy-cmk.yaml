@@ -21,6 +21,9 @@ spec:
       containers:
       - image: checkmk/check-mk-raw:2.0.0p5
         name: check-mk-raw
+        env:
+          - name: MAIL_RELAY_HOST
+            value: "192.168.1.16"
         resources: {}
         ports:
           - containerPort: 5000
@@ -29,8 +32,6 @@ spec:
             name: site-volume
           - mountPath: /opt/omd/sites/cmk/tmp
             name: tmp-volume
-          - mountPath: /etc/postfix
-            name: postfix
       volumes:
       - name: site-volume
         persistentVolumeClaim:
@@ -38,9 +39,6 @@ spec:
       - name: tmp-volume
         emptyDir:
           medium: "Memory"
-      - name: postfix
-        hostPath:
-          path: /opt/postfix
       securityContext:
         fsGroup: 0
         runAsUser: 0
