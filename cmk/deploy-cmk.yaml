@@ -19,7 +19,7 @@ spec:
         app: cmk
     spec:
       containers:
-      - image: checkmk/check-mk-raw:2.0.0p6
+      - image: checkmk/check-mk-raw:2.0.0p9
         name: check-mk-raw
         env:
           - name: MAIL_RELAY_HOST
