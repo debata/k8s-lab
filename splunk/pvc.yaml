@@ -5,7 +5,7 @@ metadata:
   name: pvc-splunk-var
   namespace: splunk
 spec:
-  storageClassName: "local-storage"
+  storageClassName: nfs-client
   accessModes: 
   - ReadWriteOnce
   resources:
@@ -18,7 +18,7 @@ metadata:
   name: pvc-splunk-etc
   namespace: splunk
 spec:
-  storageClassName: "local-storage"
+  storageClassName: nfs-client
   accessModes: 
   - ReadWriteOnce
   resources:
@@ -31,7 +31,7 @@ metadata:
   name: pvc-varlog-local
   namespace: splunk
 spec:
-  storageClassName: "log-storage"
+  storageClassName: nfs-client
   accessModes: 
   - ReadWriteOnce
   resources:

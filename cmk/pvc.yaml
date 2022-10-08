@@ -4,6 +4,7 @@ metadata:
   name: site-pvc 
   namespace: cmk
 spec:
+  storageClassName: nfs-client
   accessModes: 
   - ReadWriteOnce
   resources:
